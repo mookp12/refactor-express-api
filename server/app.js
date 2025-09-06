@@ -3,6 +3,7 @@ import cors from "cors";
 import { client, db } from "./utils/db.js";
 import { ObjectId } from "mongodb";
 
+
 const init = async () => {
   await client.connect();
   const app = express();
@@ -15,6 +16,7 @@ const init = async () => {
 
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
+  
 
   // Products routes
   app.get("/products", async (req, res) => {
