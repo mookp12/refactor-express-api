@@ -15,7 +15,18 @@ const ProductController = {
       }
       const collection = db.collection("products");
       const allProducts = await collection.find(query).limit(10).toArray();
-      return res.json({ data: allProducts });
+
+      const newAllProducts = [
+        allProducts.map((product) => ({
+          name: product.name,
+          price: product.price,
+          image: product.image,
+          description: product.description,
+          category: product.category,
+        })),
+      ];
+
+      return res.json({ data: newAllProducts });
     } catch (error) {
       return res.json({ message: `${error}` });
     }
@@ -26,16 +37,24 @@ const ProductController = {
       const productId = new ObjectId(req.params.id);
 
       const productById = await collection.findOne({ _id: productId });
+      const newProductById = {
+        name: productById.name,
+        price: productById.price,
+        image: productById.image,
+        description: productById.description,
+        category: productById.category,
+      };
 
-      return res.json({ data: productById });
+      return res.json({ data: newProductById });
     } catch (error) {
       return res.json({ message: `${error}` });
     }
   },
   createProduct: async (req, res) => {
+    const {name,price, image,description,category} = req.body
     try {
       const collection = db.collection("products");
-      const productData = { ...req.body, created_at: new Date() };
+      const productData = { name,price, image,description,category, created_at: new Date() };
       const newProductData = await collection.insertOne(productData);
       return res.json({
         message: `Product Id ${newProductData.insertedId} has been created successfully`,
@@ -45,9 +64,10 @@ const ProductController = {
     }
   },
   updateProduct: async (req, res) => {
+    const {name,price, image,description,category} = req.body
     try {
       const collection = db.collection("products");
-      const newProductData = { ...req.body, modified_at: new Date() };
+      const newProductData = { name,price, image,description,category, modified_at: new Date() };
       const productId = new ObjectId(req.params.id);
 
       await collection.updateOne({ _id: productId }, { $set: newProductData });
