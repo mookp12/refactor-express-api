@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { db } from "../utils/db.js";
 import { ObjectId } from "mongodb";
+import ProductValidation from "../middlewares/productValidation.js";
 
 const ProductRoute = {
     createRouter : () => {
@@ -37,7 +38,7 @@ const ProductRoute = {
             }
           });
         
-          productRouter.post("/", async (req, res) => {
+          productRouter.post("/", ProductValidation.validateProduct, async (req, res) => {
             try {
               const collection = db.collection("products");
               const productData = { ...req.body, created_at: new Date() };
@@ -50,7 +51,7 @@ const ProductRoute = {
             }
           });
         
-          productRouter.put("/:id", async (req, res) => {
+          productRouter.put("/:id", ProductValidation.validateProduct, async (req, res) => {
             try {
               const collection = db.collection("products");
               const newProductData = { ...req.body, modified_at: new Date() };
